@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  status      Status    @default(active)
+  important   Boolean   @default(false)
+  taskDate    DateTime  @map("task_date")
+  alarmTime   DateTime  @map("alarm_date")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  taskType    TaskType? @relation(fields: [taskTypeId], references: [id])
+  taskTypeId  String?   @map("task_type_id")
+
+  @@map("task")
+}
+
+model TaskType {
+  id   String @id @default(cuid())
+  name String
+
+  tasks Task[]
+
+  @@map("task_type")
+}
+
+enum Status {
+  active
+  completed
+}
