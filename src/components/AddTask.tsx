@@ -2,17 +2,25 @@
 
 import React, { useEffect, useState } from "react";
 import { MyCalendar } from "@/src/components/Calendar";
-import { patchTask, postTask } from "@/src/service/taskApi";
+import {
+  getAllTasks,
+  getOneTasks,
+  patchTask,
+  postTask,
+} from "@/src/service/taskApi";
 import { Task } from "@prisma/client";
 import { cn } from "@/lib/utils";
 import { CustomToast } from "@/src/components/ui/custom-toast";
+import useSWR from "swr";
 
 export const AddTask: React.FC<{
   setAddTaskAction: (addTask: boolean) => void;
   editTask?: Task;
 }> = ({ setAddTaskAction, editTask }) => {
+  const { data: task, mutate } = useSWR("getOneTask", () => getOneTasks("qwd"));
+
   const today = new Date();
-  const [error, serError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const [selectedDate, setSelectedDate] = useState<Date>(
     editTask?.taskDate ? new Date(editTask.taskDate) : today
@@ -63,14 +71,21 @@ export const AddTask: React.FC<{
     // );
 
     if (editTask?.id) {
-      if (
-        editTask.title === title ||
-        editTask.description === description ||
-        editTask.taskDate === taskDateTime ||
-        editTask.alarmTime === alarmDateTime
-      ) {
-        serError("Event has been created.");
-      } else {
+      // Проверяем, есть ли изменения
+      const isChanged =
+        editTask.title === title
+          ? editTask.description === description
+          : editTask.taskDate === taskDateTime &&
+            editTask.alarmTime === alarmDateTime;
+
+      console.log(isChanged);
+
+      if (isChanged) {
+        setError("Ничего не изменено!");
+        return; // Ранний выход
+      }
+
+      try {
         await patchTask({
           ...editTask,
           title,
@@ -78,19 +93,34 @@ export const AddTask: React.FC<{
           taskDate: taskDateTime,
           alarmTime: alarmDateTime,
         });
+        setError("Изменения сохранены");
+      } catch (error) {
+        setError("Ошибка при сохранении изменений");
+        console.error(error);
       }
     } else {
-      await postTask({
-        title,
-        description,
-        taskDate: taskDateTime,
-        alarmTime: alarmDateTime,
-      });
+      try {
+        await postTask({
+          title,
+          description,
+          taskDate: taskDateTime,
+          alarmTime: alarmDateTime,
+        });
+        setError("Задача добавлена");
+      } catch (error) {
+        setError("Ошибка при добавлении задачи");
+        console.error(error);
+      }
     }
   };
 
   return (
-    <div className="w-full h-full p-2">
+    <div className="w-full h-full p-2 relative">
+      <CustomToast
+        errorMessage={error}
+        setErrorMessage={setError}
+        className="absolute top-0 left-0"
+      />
       {/* Шапка */}
       <div
         onClick={() => setAddTaskAction(false)}
@@ -110,11 +140,6 @@ export const AddTask: React.FC<{
 
       {/* Форма */}
       <div className="border-t border-gray-200 p-4">
-        <CustomToast
-          errorMessage={error}
-          setErrorMessage={serError}
-          className="fixed bottom-20 left-10"
-        />
         <input
           type="text"
           placeholder="Новая задача"

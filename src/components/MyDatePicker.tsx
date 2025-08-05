@@ -1,4 +1,5 @@
 import { MyCalendar } from "@/src/components/Calendar";
+import { AnimatePresence, motion } from "motion/react";
 import React, { useRef, useState } from "react";
 import { useClickAway } from "react-use";
 
@@ -27,17 +28,23 @@ export const MyDatePicker = ({
         📅
         <span className="text-xs">Выбор</span>
       </button>
-      {showDatePicker && (
-        <div
-          ref={ref}
-          className="absolute top-12 right-0 z-50 bg-white w-[90%] shadow-lg rounded-lg"
-        >
-          <MyCalendar
-            setSelectedDate={setSelectedDate}
-            selectedDate={selectedDate}
-          />
-        </div>
-      )}
+      <AnimatePresence initial={false}>
+        {showDatePicker ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0 }}
+            key="box"
+            ref={ref}
+            className="absolute top-12 right-0 z-50 bg-white w-[80%] shadow-lg rounded-lg"
+          >
+            <MyCalendar
+              setSelectedDate={setSelectedDate}
+              selectedDate={selectedDate}
+            />
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 };

@@ -69,12 +69,14 @@ export const TodoItem = ({
         </Flex>
         <Flex gap="3" justify="center" align="center">
           <EditIcon
+            className="cursor-pointer"
             onClick={() => {
               setEditTaskAction(task);
               setAddTaskAction(true);
             }}
           />
           <Trash
+            className="cursor-pointer"
             onClick={() => {
               handleDeleteTask(task.id);
               mutate();

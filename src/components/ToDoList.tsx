@@ -35,7 +35,7 @@ const ToDoList: React.FC<{
   const randomId = Math.floor(Math.random() * 20) + 1;
 
   return (
-    <div className="overflow-hidden p-2 w-full h-full rounded-3xl">
+    <div className="overflow-hidden p-2 w-full h-full rounded-3xl relative">
       {/* Заголовок */}
       <Header setAddTaskAction={setAddTaskAction} />
 
@@ -132,11 +132,6 @@ const ToDoList: React.FC<{
           </div>
         </TabsContent>
       </Tabs>
-      {/*<div className="flex gap-4 mt-6 text-sm">*/}
-      {/*  <button className="text-indigo-700 font-semibold">Все</button>*/}
-      {/*  <button className="text-gray-500">Выполненные</button>*/}
-      {/*  <button className="text-gray-500">Активные</button>*/}
-      {/*</div>*/}
     </div>
   );
 };

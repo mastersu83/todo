@@ -5,6 +5,9 @@ import { UpdateTodo } from "@/src/types/types";
 export const getAllTasks = async (): Promise<Task[]> => {
   return await apiKy("tasks").json();
 };
+export const getOneTasks = async (id: string): Promise<Task[]> => {
+  return await apiKy(`tasks/${id}`).json();
+};
 
 export const postTask = async (task: {
   taskDate: Date;
