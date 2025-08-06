@@ -20,7 +20,11 @@ export const HomePage = ({ tasks }: IHome) => {
       className="w-[430px] h-[90vh] bg-white shadow-lg rounded-3xl text-black pb-4"
     >
       {addTask ? (
-        <AddTask setAddTaskAction={setAddTask} editTask={editTask} />
+        <AddTask
+          setAddTaskAction={setAddTask}
+          editTask={editTask}
+          editTaskId={editTask.id}
+        />
       ) : (
         <ToDoList
           tasks={tasks}

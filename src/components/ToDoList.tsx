@@ -32,8 +32,6 @@ const ToDoList: React.FC<{
     await deleteTask(id);
   };
 
-  const randomId = Math.floor(Math.random() * 20) + 1;
-
   return (
     <div className="overflow-hidden p-2 w-full h-full rounded-3xl relative">
       {/* Заголовок */}
@@ -65,7 +63,7 @@ const ToDoList: React.FC<{
         <TabsContent value="all" className="h-full overflow-auto p-2">
           <div className="flex flex-col gap-4 border-t border-gray-200">
             {filteredTasks.length > 0 ? (
-              filteredTasks.map((task, idx) => (
+              filteredTasks.map((task) => (
                 <TodoItem
                   key={task.id}
                   task={task}
@@ -87,7 +85,7 @@ const ToDoList: React.FC<{
           <div className="flex flex-col gap-4 border-t border-gray-200">
             {filteredTasks.length > 0 ? (
               filteredTasks.map(
-                (task, idx) =>
+                (task) =>
                   task.status === "active" && (
                     <TodoItem
                       key={task.id}
@@ -111,7 +109,7 @@ const ToDoList: React.FC<{
           <div className="flex flex-col gap-4 border-t border-gray-200 ">
             {filteredTasks.length > 0 ? (
               filteredTasks.map(
-                (task, idx) =>
+                (task) =>
                   task.status === "completed" && (
                     <TodoItem
                       key={task.id}

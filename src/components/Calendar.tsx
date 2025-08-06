@@ -6,7 +6,7 @@ export const MyCalendar: React.FC<{
   setSelectedDate: (date: Date) => void;
   selectedDate: Date;
 }> = ({ setSelectedDate, selectedDate }) => {
-  const { data: tasks, mutate } = useSWR("calendarDate", getAllTasks);
+  const { data: tasks } = useSWR("calendarDate", getAllTasks);
 
   const today = new Date();
   const [currentMonth, setCurrentMonth] = useState<number>(today.getMonth());
