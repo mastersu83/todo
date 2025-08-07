@@ -37,7 +37,7 @@ const ToDoList: React.FC<{
       {tasks && (
         <div className="flex flex-col pb-4 w-full h-[calc(100vh-180px)] relative rounded-3xl">
           {/* Заголовок */}
-          <Header setAddTaskAction={setAddTaskAction} />
+          <Header />
           {/* Календарь */}
           <CalendarDays
             setSelectedDate={setSelectedDate}

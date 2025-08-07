@@ -9,31 +9,17 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import sun from "@/public/images/sun.png";
 import moon from "@/public/images/moon.png";
-import React, { useState } from "react";
+import React from "react";
 import { useTheme } from "next-themes";
-import { motion } from "motion/react";
 
 export const ThemeSwitcher = () => {
   const { setTheme, theme, systemTheme } = useTheme();
 
-  const [isHoveredEdit, setIsHoveredEdit] = useState(false);
-
   return (
     <Popover>
-      <motion.div
-        animate={{
-          scale: isHoveredEdit ? 1.5 : 1,
-        }}
-        transition={{
-          duration: 0.5,
-        }}
-        onHoverStart={() => setIsHoveredEdit(true)}
-        onHoverEnd={() => setIsHoveredEdit(false)}
-      >
-        <PopoverTrigger className="cursor-pointer">
-          <SettingsIcon />
-        </PopoverTrigger>
-      </motion.div>
+      <PopoverTrigger className="cursor-pointer flex absolute top-5 right-10">
+        <SettingsIcon />
+      </PopoverTrigger>
       <PopoverContent className="flex flex-col w-50 gap-y-2">
         <span className="text-center text-xl font-bold">Тема</span>
         <Flex

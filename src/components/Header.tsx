@@ -1,26 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
-import { ThemeSwitcher } from "@/src/components/ThemeSwitcher";
-import { motion } from "motion/react";
-import { PlusIcon } from "lucide-react";
 import { Card } from "@radix-ui/themes";
 
-interface IHeader {
-  setAddTaskAction: (addTask: boolean) => void;
-}
-
-export const Header = ({ setAddTaskAction }: IHeader) => {
+export const Header = () => {
   const today = new Date();
-  const [isHoveredTrash, setIsHoveredTrash] = useState(false);
 
   const dayName = format(today, "EEEE", { locale: ru });
   const dayNumber = format(today, "d", { locale: ru });
   const monthName = format(today, "LLLL", { locale: ru });
   return (
-    <header className="flex justify-between items-center p-2">
+    <header className="flex justify-between p-1">
       <Card className="shadow-lg bg-blue-200 border-blue-300 text-black">
         Сегодня
         <p className="text-lg">
@@ -30,28 +22,6 @@ export const Header = ({ setAddTaskAction }: IHeader) => {
           </span>
         </p>
       </Card>
-      <ThemeSwitcher />
-      <motion.div
-        onHoverStart={() => setIsHoveredTrash(true)}
-        onHoverEnd={() => setIsHoveredTrash(false)}
-      >
-        <button
-          onClick={() => setAddTaskAction(true)}
-          className="rounded-full w-14 h-14 flex justify-center items-center text-3xl text-black shadow-xl border border-blue-200 bg-blue-100 cursor-pointer"
-        >
-          <motion.p
-            animate={{
-              rotate: isHoveredTrash ? [0, 10, -10, 0] : 0,
-              scale: isHoveredTrash ? 1.5 : 1,
-            }}
-            transition={{
-              duration: 0.5,
-            }}
-          >
-            <PlusIcon />
-          </motion.p>
-        </button>
-      </motion.div>
     </header>
   );
 };

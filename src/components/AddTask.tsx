@@ -6,6 +6,7 @@ import { getOneTasks, patchTask, postTask } from "@/src/service/taskApi";
 import { cn } from "@/lib/utils";
 import { CustomToast } from "@/src/components/ui/custom-toast";
 import useSWR, { useSWRConfig } from "swr";
+import { Flex } from "@radix-ui/themes";
 
 export const AddTask: React.FC<{
   setAddTaskAction: (addTask: boolean) => void;
@@ -144,7 +145,7 @@ export const AddTask: React.FC<{
           className="absolute top-0 left-0"
         />
         {/* Шапка */}
-        <div className="flex justify-between items-center p-1">
+        <Flex justify="between" align="center" className="p-1">
           <div
             className="cursor-pointer"
             onClick={() => setAddTaskAction(false)}
@@ -152,9 +153,7 @@ export const AddTask: React.FC<{
             <span className="text-xl cursor-pointer mr-2">←</span>
             <span className="opacity-50 text-xl font-semibold">Назад</span>
           </div>
-
-          <span className="text-xl cursor-pointer">⋯</span>
-        </div>
+        </Flex>
         <MyCalendar
           setSelectedDate={setSelectedDate}
           selectedDate={selectedDate}
