@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { getAllTasks } from "@/src/service/taskApi";
-import { cn } from "@/lib/utils";
-import { useTheme } from "next-themes";
 
 export const MyCalendar: React.FC<{
   setSelectedDate: (date: Date) => void;
   selectedDate: Date;
 }> = ({ setSelectedDate, selectedDate }) => {
-  const { theme, systemTheme } = useTheme();
-
   const { data: tasks } = useSWR("calendarDate", getAllTasks);
 
   const today = new Date();

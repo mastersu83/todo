@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from "motion/react";
 import React, { useRef, useState } from "react";
 import { useClickAway } from "react-use";
 import { Calendar1 } from "lucide-react";
-import { Card } from "@radix-ui/themes";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 
