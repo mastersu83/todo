@@ -10,10 +10,10 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const { title, description, status, taskDate, alarmTime } = await req.json();
 
-  const category = await prisma.task.create({
+  const task = await prisma.task.create({
     data: { title, description, status, taskDate, alarmTime },
   });
-  return NextResponse.json({ title, description, status, taskDate, alarmTime });
+  return NextResponse.json(task);
 }
 
 export async function PATCH(req: NextRequest) {

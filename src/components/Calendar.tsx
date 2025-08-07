@@ -146,7 +146,7 @@ export const MyCalendar: React.FC<{
             >
               {date.getDate()}
               {hasTask(date) && (
-                <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-red-500 rounded-full"></span>
+                <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-red-500 rounded-full" />
               )}
             </button>
           );

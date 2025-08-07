@@ -3,35 +3,27 @@ import React, { useState } from "react";
 import { Task } from "@prisma/client";
 import { AddTask } from "@/src/components/AddTask";
 import ToDoList from "@/src/components/ToDoList";
-import { Flex } from "@radix-ui/themes";
+import { Card, Flex } from "@radix-ui/themes";
 
-interface IHome {
-  tasks: Task[];
-}
-
-export const HomePage = ({ tasks }: IHome) => {
+export const HomePage = () => {
   const [addTask, setAddTask] = useState(false);
   const [editTask, setEditTask] = useState<Task>({} as Task);
 
   return (
-    <Flex
-      align="center"
-      justify="center"
-      className="w-[430px] h-[90vh] bg-white shadow-lg rounded-3xl text-black pb-4"
-    >
-      {addTask ? (
-        <AddTask
-          setAddTaskAction={setAddTask}
-          editTask={editTask}
-          editTaskId={editTask.id}
-        />
-      ) : (
-        <ToDoList
-          tasks={tasks}
-          setAddTaskAction={setAddTask}
-          setEditTaskAction={setEditTask}
-        />
-      )}
-    </Flex>
+    <Card className="shadow-lg">
+      <Flex
+        justify="center"
+        className="w-[430px] h-[90vh] pb-4 overflow-hidden overflow-y-auto"
+      >
+        {addTask ? (
+          <AddTask setAddTaskAction={setAddTask} editTaskId={editTask.id} />
+        ) : (
+          <ToDoList
+            setAddTaskAction={setAddTask}
+            setEditTaskAction={setEditTask}
+          />
+        )}
+      </Flex>
+    </Card>
   );
 };

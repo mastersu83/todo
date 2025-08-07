@@ -2,6 +2,7 @@ import { MyCalendar } from "@/src/components/Calendar";
 import { AnimatePresence, motion } from "motion/react";
 import React, { useRef, useState } from "react";
 import { useClickAway } from "react-use";
+import { Calendar1 } from "lucide-react";
 
 interface IDataPicker {
   setSelectedDate: (selectedDate: Date) => void;
@@ -20,12 +21,12 @@ export const MyDatePicker = ({
     setShowDatePicker(!showDatePicker);
   });
   return (
-    <div>
+    <>
       <button
         onClick={() => setShowDatePicker(!showDatePicker)}
-        className="flex flex-col items-center justify-center text-sm px-3 py-2 rounded-xl bg-gray-200 text-gray-700 hover:bg-gray-300"
+        className="flex flex-col items-center justify-center text-sm px-3 py-2 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-300  border border-gray-300 cursor-pointer"
       >
-        📅
+        <Calendar1 />
         <span className="text-xs">Выбор</span>
       </button>
       <AnimatePresence initial={false}>
@@ -45,6 +46,6 @@ export const MyDatePicker = ({
           </motion.div>
         ) : null}
       </AnimatePresence>
-    </div>
+    </>
   );
 };

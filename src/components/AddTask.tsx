@@ -3,16 +3,14 @@
 import React, { useEffect, useState } from "react";
 import { MyCalendar } from "@/src/components/Calendar";
 import { getOneTasks, patchTask, postTask } from "@/src/service/taskApi";
-import { Task } from "@prisma/client";
 import { cn } from "@/lib/utils";
 import { CustomToast } from "@/src/components/ui/custom-toast";
 import useSWR, { useSWRConfig } from "swr";
 
 export const AddTask: React.FC<{
   setAddTaskAction: (addTask: boolean) => void;
-  editTask?: Task;
   editTaskId: string;
-}> = ({ setAddTaskAction, editTask, editTaskId }) => {
+}> = ({ setAddTaskAction, editTaskId }) => {
   const { data: task, mutate } = useSWR("getOneTask", () =>
     getOneTasks(editTaskId)
   );
@@ -120,6 +118,16 @@ export const AddTask: React.FC<{
         setError("Задача добавлена");
         await mutate();
         await mutateCalendar("calendarDate");
+        setTime(
+          new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          })
+        );
+        setTitle("");
+        setDescription("");
+        setSelectedDate(today);
       } catch (error) {
         setError("Ошибка при добавлении задачи");
         console.error(error);
