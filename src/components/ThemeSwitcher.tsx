@@ -17,7 +17,7 @@ export const ThemeSwitcher = () => {
 
   return (
     <Popover>
-      <PopoverTrigger className="cursor-pointer flex absolute top-5 right-10">
+      <PopoverTrigger className="cursor-pointer flex absolute top-5 right-25">
         <SettingsIcon />
       </PopoverTrigger>
       <PopoverContent className="flex flex-col w-50 gap-y-2">
