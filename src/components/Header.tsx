@@ -6,6 +6,7 @@ import { ru } from "date-fns/locale";
 import { ThemeSwitcher } from "@/src/components/ThemeSwitcher";
 import { motion } from "motion/react";
 import { PlusIcon } from "lucide-react";
+import { Card } from "@radix-ui/themes";
 
 interface IHeader {
   setAddTaskAction: (addTask: boolean) => void;
@@ -20,14 +21,15 @@ export const Header = ({ setAddTaskAction }: IHeader) => {
   const monthName = format(today, "LLLL", { locale: ru });
   return (
     <header className="flex justify-between items-center p-2">
-      <div>
+      <Card className="shadow-lg bg-blue-200 border-blue-300 text-black">
+        Сегодня
         <p className="text-lg">
           {dayName}{" "}
           <span className="font-semibold">
             {dayNumber} {monthName}
           </span>
         </p>
-      </div>
+      </Card>
       <ThemeSwitcher />
       <motion.div
         onHoverStart={() => setIsHoveredTrash(true)}
@@ -35,7 +37,7 @@ export const Header = ({ setAddTaskAction }: IHeader) => {
       >
         <button
           onClick={() => setAddTaskAction(true)}
-          className="rounded-full w-14 h-14 flex justify-center items-center text-3xl shadow-xl border border-gray-200 cursor-pointer"
+          className="rounded-full w-14 h-14 flex justify-center items-center text-3xl text-black shadow-xl border border-blue-200 bg-blue-100 cursor-pointer"
         >
           <motion.p
             animate={{

@@ -10,11 +10,8 @@ export const HomePage = () => {
   const [editTask, setEditTask] = useState<Task>({} as Task);
 
   return (
-    <Card className="shadow-lg">
-      <Flex
-        justify="center"
-        className="w-[430px] h-[90vh] pb-4 overflow-hidden overflow-y-auto"
-      >
+    <Card className="shadow-lg w-[430px] h-[90vh] pb-4 overflow-hidden overflow-y-auto">
+      <Flex justify="center">
         {addTask ? (
           <AddTask setAddTaskAction={setAddTask} editTaskId={editTask.id} />
         ) : (

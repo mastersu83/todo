@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { getAllTasks } from "@/src/service/taskApi";
+import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 
 export const MyCalendar: React.FC<{
   setSelectedDate: (date: Date) => void;
   selectedDate: Date;
 }> = ({ setSelectedDate, selectedDate }) => {
+  const { theme, systemTheme } = useTheme();
+
   const { data: tasks } = useSWR("calendarDate", getAllTasks);
 
   const today = new Date();
@@ -98,8 +102,8 @@ export const MyCalendar: React.FC<{
     );
 
   return (
-    <div className="p-4">
-      <div className="flex justify-between text-indigo-700 font-semibold mb-3">
+    <>
+      <div className="flex justify-evenly font-semibold mb-3">
         <button onClick={() => handleMonthChange("prev")}>←</button>
         <span>
           {new Date(currentYear, currentMonth).toLocaleString("ru-RU", {
@@ -111,7 +115,7 @@ export const MyCalendar: React.FC<{
       </div>
 
       {/* Заголовки дней */}
-      <div className="grid grid-cols-7 text-center text-xs text-gray-500 mb-1">
+      <div className="grid grid-cols-7 text-center text-xs mb-1">
         {["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"].map((d) => (
           <div key={d}>{d}</div>
         ))}
@@ -134,14 +138,14 @@ export const MyCalendar: React.FC<{
                 setCurrentMonth(date.getMonth());
                 setCurrentYear(date.getFullYear());
               }}
-              className={`p-2 rounded-lg text-xs transition relative ${
+              className={`p-2 rounded-lg text-xs transition relative border border-gray-300 shadow-lg ${
                 isSelected
-                  ? "bg-red-200 font-semibold"
+                  ? "bg-red-200 font-semibold text-black"
                   : !isCurrentMonth
-                  ? "text-gray-400 bg-gray-50 cursor-default"
+                  ? "text-gray-500 bg-gray-50 cursor-default"
                   : isSunday
-                  ? "bg-blue-100"
-                  : "bg-gray-100 hover:bg-gray-200"
+                  ? "bg-blue-100 text-black"
+                  : "hover:bg-gray-200 hover:text-black"
               }`}
             >
               {date.getDate()}
@@ -157,20 +161,14 @@ export const MyCalendar: React.FC<{
           <button
             key={option}
             onClick={() => handleDayOptionSelect(option)}
-            className={`flex-1 py-2 rounded-lg text-sm transition ${
-              selectedDayOption === option
-                ? "bg-indigo-500 text-white"
-                : option === "Сегодня"
-                ? "bg-blue-100"
-                : option === "Завтра"
-                ? "bg-red-100"
-                : "bg-yellow-100"
+            className={`flex-1 py-2 rounded-lg text-sm transition border border-gray-200 shadow-lg cursor-pointer ${
+              selectedDayOption === option ? "bg-gray-700 text-white" : ""
             }`}
           >
             {option}
           </button>
         ))}
       </div>
-    </div>
+    </>
   );
 };

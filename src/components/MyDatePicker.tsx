@@ -3,6 +3,9 @@ import { AnimatePresence, motion } from "motion/react";
 import React, { useRef, useState } from "react";
 import { useClickAway } from "react-use";
 import { Calendar1 } from "lucide-react";
+import { Card } from "@radix-ui/themes";
+import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 
 interface IDataPicker {
   setSelectedDate: (selectedDate: Date) => void;
@@ -14,6 +17,7 @@ export const MyDatePicker = ({
   selectedDate,
 }: IDataPicker) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const { theme, systemTheme } = useTheme();
 
   const ref = useRef(null);
 
@@ -37,7 +41,15 @@ export const MyDatePicker = ({
             exit={{ opacity: 0, scale: 0 }}
             key="box"
             ref={ref}
-            className="absolute top-12 right-0 z-50 bg-white w-[80%] shadow-lg rounded-lg"
+            className={cn(
+              theme === "dark" || (theme === "system" && systemTheme === "dark")
+                ? "bg-black/70"
+                : theme === "light" ||
+                  (theme === "system" && systemTheme === "light")
+                ? "bg-white/50"
+                : "",
+              "absolute top-12 right-0 backdrop-blur-md z-50 w-[80%] shadow-lg rounded-xl px-4 pt-2"
+            )}
           >
             <MyCalendar
               setSelectedDate={setSelectedDate}

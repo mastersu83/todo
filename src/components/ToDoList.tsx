@@ -35,7 +35,7 @@ const ToDoList: React.FC<{
   return (
     <>
       {tasks && (
-        <div className="flex flex-col p-4 w-full h-[calc(100vh-150px)] relative rounded-3xl">
+        <div className="flex flex-col pb-4 w-full h-[calc(100vh-180px)] relative rounded-3xl">
           {/* Заголовок */}
           <Header setAddTaskAction={setAddTaskAction} />
           {/* Календарь */}

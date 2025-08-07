@@ -137,18 +137,18 @@ export const AddTask: React.FC<{
 
   return (
     <>
-      <div className="w-full h-full p-2 relative">
+      <div className="pb-4 w-full h-[calc(100vh-80px)] overflow-y-auto relative">
         <CustomToast
           errorMessage={error}
           setErrorMessage={setError}
           className="absolute top-0 left-0"
         />
         {/* Шапка */}
-        <div
-          onClick={() => setAddTaskAction(false)}
-          className="flex justify-between items-center p-4 cursor-pointer"
-        >
-          <div>
+        <div className="flex justify-between items-center p-1">
+          <div
+            className="cursor-pointer"
+            onClick={() => setAddTaskAction(false)}
+          >
             <span className="text-xl cursor-pointer mr-2">←</span>
             <span className="opacity-50 text-xl font-semibold">Назад</span>
           </div>
@@ -161,13 +161,13 @@ export const AddTask: React.FC<{
         />
 
         {/* Форма */}
-        <div className="border-t border-gray-200 p-4">
+        <div className="p-1">
           <input
             type="text"
             placeholder="Новая задача"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="text-xl font-semibold border-b border-gray-300 focus:outline-none focus:border-indigo-400 text-center w-full mb-4"
+            className="text-xl font-semibold border-b border-gray-300 focus:outline-none focus:border-indigo-400 text-center w-full mb-4 p-2 pb-0"
           />
           <label className="block text-sm font-semibold mb-1">Заметки</label>
           <input
