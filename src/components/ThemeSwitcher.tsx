@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Popover,
   PopoverContent,
@@ -17,10 +19,10 @@ export const ThemeSwitcher = () => {
 
   return (
     <Popover>
-      <PopoverTrigger className="cursor-pointer flex absolute top-5 right-25">
+      <PopoverTrigger className="cursor-pointer flex absolute top-5 right-5 z-50">
         <SettingsIcon />
       </PopoverTrigger>
-      <PopoverContent className="flex flex-col w-50 gap-y-2">
+      <PopoverContent className="flex flex-col w-50 gap-y-2 absolute top-0 -right-5">
         <span className="text-center text-xl font-bold">Тема</span>
         <Flex
           gap="10px"

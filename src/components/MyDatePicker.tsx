@@ -27,10 +27,10 @@ export const MyDatePicker = ({
     <>
       <button
         onClick={() => setShowDatePicker(!showDatePicker)}
-        className="flex flex-col items-center justify-center text-sm px-3 py-2 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-300  border border-gray-300 cursor-pointer"
+        className="flex flex-col items-center justify-center text-sm px-3 py-2 rounded-xl text-gray-700 hover:bg-gray-300 border border-gray-300 cursor-pointer shadow-md"
       >
         <Calendar1 />
-        <span className="text-xs">Выбор</span>
+        <span className="text-xs font-bold">Выбор</span>
       </button>
       <AnimatePresence initial={false}>
         {showDatePicker ? (
@@ -47,7 +47,7 @@ export const MyDatePicker = ({
                   (theme === "system" && systemTheme === "light")
                 ? "bg-white/50"
                 : "",
-              "absolute top-12 right-0 backdrop-blur-md z-50 w-[80%] shadow-lg rounded-xl px-4 pt-2"
+              "absolute top-12 right-0 backdrop-blur-md z-50 w-[90%] shadow-lg rounded-xl px-4 pt-2"
             )}
           >
             <MyCalendar

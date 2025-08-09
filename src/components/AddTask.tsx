@@ -7,13 +7,15 @@ import { cn } from "@/lib/utils";
 import { CustomToast } from "@/src/components/ui/custom-toast";
 import useSWR, { useSWRConfig } from "swr";
 import { Flex } from "@radix-ui/themes";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export const AddTask: React.FC<{
-  setAddTaskAction: (addTask: boolean) => void;
-  editTaskId: string;
-}> = ({ setAddTaskAction, editTaskId }) => {
+  editTaskId?: string;
+}> = ({ editTaskId }) => {
+  const { back } = useRouter();
   const { data: task, mutate } = useSWR("getOneTask", () =>
-    getOneTasks(editTaskId)
+    getOneTasks(editTaskId ? editTaskId : null)
   );
 
   const { mutate: mutateCalendar } = useSWRConfig();
@@ -137,83 +139,82 @@ export const AddTask: React.FC<{
   };
 
   return (
-    <>
-      <div className="pb-4 w-full h-[calc(100vh-80px)] overflow-y-auto relative">
-        <CustomToast
-          errorMessage={error}
-          setErrorMessage={setError}
-          className="absolute top-0 left-0"
-        />
-        {/* Шапка */}
-        <Flex justify="between" align="center" className="p-1">
-          <div
-            className="cursor-pointer"
-            onClick={() => setAddTaskAction(false)}
-          >
-            <span className="text-xl cursor-pointer mr-2">←</span>
-            <span className="opacity-50 text-xl font-semibold">Назад</span>
-          </div>
-        </Flex>
-        <MyCalendar
-          setSelectedDate={setSelectedDate}
-          selectedDate={selectedDate}
-        />
-
-        {/* Форма */}
-        <div className="p-1">
-          <input
-            type="text"
-            placeholder="Новая задача"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="text-xl font-semibold border-b border-gray-300 focus:outline-none focus:border-indigo-400 text-center w-full mb-4 p-2 pb-0"
-          />
-          <label className="block text-sm font-semibold mb-1">Заметки</label>
-          <input
-            type="text"
-            placeholder="Введите заметку"
-            value={description ? description : ""}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-md mb-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
-          />
-
-          <div className="flex justify-between gap-4 mb-4">
-            <div className="flex-1">
-              <label className="block text-sm font-semibold mb-1">Время</label>
-              <input
-                type="time"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block text-sm font-semibold mb-1">
-                Напоминание (−30 мин)
-              </label>
-              <input
-                type="time"
-                value={alarmTime}
-                onChange={(e) => setAlarmTime(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
-              />
-            </div>
-          </div>
-
-          <button
-            disabled={!title?.length}
-            onClick={handleAddTask}
-            className={cn(
-              !title
-                ? "bg-gray-300"
-                : "bg-indigo-900 hover:bg-indigo-600 transition cursor-pointer active:bg-indigo-900",
-              "w-full text-white py-3 rounded-b-2xl font-semibold "
-            )}
-          >
-            {task ? "Сохранить" : "Добавить задачу"}
-          </button>
+    <div className="pb-4 w-full h-[calc(100vh-80px)] overflow-y-auto relative">
+      <CustomToast
+        errorMessage={error}
+        setErrorMessage={setError}
+        className="absolute top-0 left-0"
+      />
+      {/* Шапка */}
+      <Flex justify="between" align="center" className="">
+        <div
+          onClick={back}
+          className="cursor-pointer p-1 pr-2 mb-3 border border-gray-200 rounded-lg shadow-sm hover:bg-gray-200 hover:text-black"
+        >
+          <span className="text-xl cursor-pointer mr-2">←</span>
+          <span className="opacity-50 text-xl font-semibold">Назад</span>
         </div>
+      </Flex>
+      <MyCalendar
+        setSelectedDate={setSelectedDate}
+        selectedDate={selectedDate}
+      />
+
+      {/* Форма */}
+      <div className="p-1">
+        <input
+          type="text"
+          placeholder="Новая задача"
+          autoFocus
+          value={title ? title : ""}
+          onChange={(e) => setTitle(e.target.value)}
+          className="text-xl font-semibold border-b border-gray-300 focus:outline-none focus:border-indigo-400 text-center w-full mb-4 p-2 pb-0"
+        />
+        <label className="block text-sm font-semibold mb-1">Заметки</label>
+        <input
+          type="text"
+          placeholder="Введите заметку"
+          value={description ? description : ""}
+          onChange={(e) => setDescription(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded-md mb-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+        />
+
+        <div className="flex justify-between gap-4 mb-4">
+          <div className="flex-1">
+            <label className="block text-sm font-semibold mb-1">Время</label>
+            <input
+              type="time"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+            />
+          </div>
+          <div className="flex-1">
+            <label className="block text-sm font-semibold mb-1">
+              Напоминание (−30 мин)
+            </label>
+            <input
+              type="time"
+              value={alarmTime}
+              onChange={(e) => setAlarmTime(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+            />
+          </div>
+        </div>
+
+        <button
+          disabled={!title?.length}
+          onClick={handleAddTask}
+          className={cn(
+            !title
+              ? "bg-gray-300"
+              : "bg-indigo-900 hover:bg-indigo-600 transition cursor-pointer active:bg-indigo-900 shadow-md",
+            "w-full text-white py-3 rounded-b-2xl font-semibold "
+          )}
+        >
+          {task ? "Сохранить" : "Добавить задачу"}
+        </button>
       </div>
-    </>
+    </div>
   );
 };

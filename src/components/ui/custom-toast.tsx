@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Flex } from "@radix-ui/themes";
+import { Card, Flex } from "@radix-ui/themes";
 import { motion } from "motion/react";
 
 interface CustomToastProps {
@@ -25,9 +25,15 @@ export const CustomToast = ({
         className
       )}
     >
-      <div className="flex flex-col items-center justify-center w-2/3 h-1/5 bg-white rounded-lg">
-        <span color="red">{errorMessage}</span>
-      </div>
+      <Card className="w-2/3 h-1/5 backdrop-blur-sm">
+        <Flex
+          justify="center"
+          align="center"
+          className="w-full h-full font-bold text-lg"
+        >
+          <span>{errorMessage}</span>
+        </Flex>
+      </Card>
     </motion.div>
   );
 };

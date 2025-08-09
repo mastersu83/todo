@@ -5,11 +5,10 @@ import { Card, Flex, Text } from "@radix-ui/themes";
 import { cn } from "@/lib/utils";
 import { UpdateTodo } from "@/src/types/types";
 import { motion } from "motion/react";
+import Link from "next/link";
 
 interface ITodoItem {
   task: Task;
-  setAddTaskAction: (addTask: boolean) => void;
-  setEditTaskAction: (task: Task) => void;
   handleChangeStatus: (task: UpdateTodo) => void;
   handleDeleteTask: (id: string) => void;
   activeTab?: boolean;
@@ -17,8 +16,6 @@ interface ITodoItem {
 
 export const TodoItem = ({
   task,
-  setEditTaskAction,
-  setAddTaskAction,
   handleChangeStatus,
   handleDeleteTask,
   activeTab,
@@ -42,7 +39,7 @@ export const TodoItem = ({
 
   return (
     <motion.div
-      className="shadow-lg rounded-2xl"
+      className="shadow-md rounded-2xl"
       layout
       initial={{ opacity: 1, y: 0 }}
       animate={{
@@ -60,7 +57,7 @@ export const TodoItem = ({
       <Card
         className={cn(
           task.status === "completed" ? "bg-green-200 text-black" : "",
-          "flex justify-between items-center p-4 border border-gray-200"
+          "flex justify-between items-center p-0 border border-gray-200"
         )}
       >
         <Flex justify="between" align="center">
@@ -93,31 +90,33 @@ export const TodoItem = ({
                   }}
                 />
               )}
-              <div className="w-full">
-                <h3
-                  className={cn(
-                    "text-base font-semibold",
-                    task.status === "completed" ? "line-through" : ""
-                  )}
-                >
-                  {task.title}
-                </h3>
-                <p
-                  className={cn(
-                    "text-xs",
-                    task.status === "completed" ? "line-through" : ""
-                  )}
-                >
-                  {task.description}
-                </p>
-              </div>
+              <Link
+                href={`/task/${task.id}`}
+                className="w-full p-2 rounded-lg cursor-pointer hover:bg-gray-200 hover:text-black"
+              >
+                <div className="">
+                  <h3
+                    className={cn(
+                      "text-base font-semibold",
+                      task.status === "completed" ? "line-through" : ""
+                    )}
+                  >
+                    {task.title}
+                  </h3>
+
+                  <p
+                    className={cn(
+                      "text-xs",
+                      task.status === "completed" ? "line-through" : ""
+                    )}
+                  >
+                    {task.description}
+                  </p>
+                </div>
+              </Link>
             </Flex>
             <Flex gap="3" justify="center" align="center">
               <motion.div
-                onClick={() => {
-                  setEditTaskAction(task);
-                  setAddTaskAction(true);
-                }}
                 animate={{
                   rotate: isHoveredEdit ? [0, 10, -10, 0] : 0,
                 }}
@@ -127,7 +126,9 @@ export const TodoItem = ({
                 onHoverStart={() => setIsHoveredEdit(true)}
                 onHoverEnd={() => setIsHoveredEdit(false)}
               >
-                <EditIcon className="cursor-pointer" />
+                <Link href={`/add-task/${task.id}`}>
+                  <EditIcon className="cursor-pointer" />
+                </Link>
               </motion.div>
               <motion.div
                 onClick={handleDelete}

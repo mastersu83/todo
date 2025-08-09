@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { getAllTasks } from "@/src/service/taskApi";
+import { cn } from "@/lib/utils";
+import { useOptions } from "@/src/hooks";
 
 export const MyCalendar: React.FC<{
   setSelectedDate: (date: Date) => void;
@@ -8,85 +10,21 @@ export const MyCalendar: React.FC<{
 }> = ({ setSelectedDate, selectedDate }) => {
   const { data: tasks } = useSWR("calendarDate", getAllTasks);
 
-  const today = new Date();
-  const [currentMonth, setCurrentMonth] = useState<number>(today.getMonth());
-  const [currentYear, setCurrentYear] = useState<number>(today.getFullYear());
+  const {
+    handleDayOptionSelect,
+    selectedDayOption,
+    calendarDays,
+    handleMonthChange,
+    setCurrentYear,
+    setCurrentMonth,
+    currentYear,
+    currentMonth,
+    setSelectedDayOption,
+  } = useOptions({ setSelectedDate });
 
-  const [selectedDayOption, setSelectedDayOption] = useState<string>("Сегодня");
-
-  const dayOptions = ["Сегодня", "Завтра", "Другой день"];
+  const options = ["Сегодня", "Завтра", "Другой день"];
 
   // Генерация календаря с 6 строками (42 ячейки), с датами предыдущего и следующего месяца
-  const generateCalendar = () => {
-    const startOfMonth = new Date(currentYear, currentMonth, 1);
-    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    const firstDayWeekday = (startOfMonth.getDay() + 6) % 7; // понедельник = 0 ... воскресенье = 6
-
-    const calendar: Date[] = [];
-
-    // Кол-во дней в предыдущем месяце
-    const prevMonthLastDate = new Date(currentYear, currentMonth, 0).getDate();
-
-    // 1) Дни предыдущего месяца (заполняем пустые ячейки в начале)
-    for (let i = firstDayWeekday - 1; i >= 0; i--) {
-      calendar.push(
-        new Date(currentYear, currentMonth - 1, prevMonthLastDate - i)
-      );
-    }
-
-    // 2) Дни текущего месяца
-    for (let d = 1; d <= daysInMonth; d++) {
-      calendar.push(new Date(currentYear, currentMonth, d));
-    }
-
-    // 3) Дни следующего месяца (дозаполняем до 42 ячеек)
-    let nextMonthDay = 1;
-    while (calendar.length < 42) {
-      calendar.push(new Date(currentYear, currentMonth + 1, nextMonthDay));
-      nextMonthDay++;
-    }
-
-    return calendar;
-  };
-
-  const [calendarDays, setCalendarDays] = useState<Date[]>(generateCalendar());
-
-  useEffect(() => {
-    setCalendarDays(generateCalendar());
-  }, [currentMonth, currentYear]);
-
-  const handleMonthChange = (direction: "prev" | "next") => {
-    if (direction === "prev") {
-      if (currentMonth === 0) {
-        setCurrentMonth(11);
-        setCurrentYear((y) => y - 1);
-      } else {
-        setCurrentMonth((m) => m - 1);
-      }
-    } else {
-      if (currentMonth === 11) {
-        setCurrentMonth(0);
-        setCurrentYear((y) => y + 1);
-      } else {
-        setCurrentMonth((m) => m + 1);
-      }
-    }
-  };
-
-  const handleDayOptionSelect = (option: string) => {
-    setSelectedDayOption(option);
-    if (option === "Сегодня") {
-      setSelectedDate(today);
-      setCurrentMonth(today.getMonth());
-      setCurrentYear(today.getFullYear());
-    } else if (option === "Завтра") {
-      const tomorrow = new Date(today);
-      tomorrow.setDate(today.getDate() + 1);
-      setSelectedDate(tomorrow);
-      setCurrentMonth(tomorrow.getMonth());
-      setCurrentYear(tomorrow.getFullYear());
-    }
-  };
 
   const hasTask = (date: Date) =>
     tasks &&
@@ -99,26 +37,36 @@ export const MyCalendar: React.FC<{
 
   return (
     <>
-      <div className="flex justify-evenly font-semibold mb-3">
-        <button onClick={() => handleMonthChange("prev")}>←</button>
+      <div className="flex justify-evenly font-semibold p-1 mb-3 border border-gray-200 rounded-lg shadow-md">
+        <button
+          className="cursor-pointer hover:bg-gray-200 hover:text-black px-2 rounded-lg"
+          onClick={() => handleMonthChange("prev")}
+        >
+          ←
+        </button>
         <span>
           {new Date(currentYear, currentMonth).toLocaleString("ru-RU", {
             month: "long",
             year: "numeric",
           })}
         </span>
-        <button onClick={() => handleMonthChange("next")}>→</button>
+        <button
+          className="cursor-pointer hover:bg-gray-200 hover:text-black px-2 rounded-lg"
+          onClick={() => handleMonthChange("next")}
+        >
+          →
+        </button>
       </div>
 
       {/* Заголовки дней */}
-      <div className="grid grid-cols-7 text-center text-xs mb-1">
+      <div className="grid grid-cols-7 text-center text-xs font-bold mb-1 p-1 border border-gray-200 rounded-md shadow-md">
         {["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"].map((d) => (
           <div key={d}>{d}</div>
         ))}
       </div>
 
       {/* Сетка календаря (6 строк, 42 ячейки) */}
-      <div className="grid grid-cols-7 gap-2 text-center text-sm py-2">
+      <div className="grid grid-cols-7 gap-2 text-center text-sm font-bold py-2">
         {calendarDays.map((date, idx) => {
           const isCurrentMonth = date.getMonth() === currentMonth;
           const isSelected =
@@ -134,15 +82,16 @@ export const MyCalendar: React.FC<{
                 setCurrentMonth(date.getMonth());
                 setCurrentYear(date.getFullYear());
               }}
-              className={`p-2 rounded-lg text-xs transition relative border border-gray-300 shadow-lg ${
+              className={cn(
                 isSelected
                   ? "bg-red-200 font-semibold text-black"
                   : !isCurrentMonth
-                  ? "text-gray-500 bg-gray-50 cursor-default"
+                  ? "text-gray-700 bg-gray-300 cursor-default hover:bg-gray-400"
                   : isSunday
-                  ? "bg-blue-100 text-black"
-                  : "hover:bg-gray-200 hover:text-black"
-              }`}
+                  ? "bg-blue-100 text-black hover:bg-gray-200"
+                  : "hover:bg-gray-200 hover:text-black",
+                "p-2 rounded-lg text-xs transition duration-1000 ease-in-out relative border border-gray-300 shadow-md cursor-pointer"
+              )}
             >
               {date.getDate()}
               {hasTask(date) && (
@@ -152,14 +101,15 @@ export const MyCalendar: React.FC<{
           );
         })}
       </div>
-      <div className="flex gap-2 mb-4">
-        {dayOptions.map((option) => (
+      <div className="flex gap-2 mb-4 font-bold">
+        {options.map((option) => (
           <button
             key={option}
             onClick={() => handleDayOptionSelect(option)}
-            className={`flex-1 py-2 rounded-lg text-sm transition border border-gray-200 shadow-lg cursor-pointer ${
-              selectedDayOption === option ? "bg-gray-700 text-white" : ""
-            }`}
+            className={cn(
+              selectedDayOption === option ? "bg-gray-700 text-white" : "",
+              "flex-1 py-2 rounded-lg text-sm transition border border-gray-200 shadow-md cursor-pointer hover:bg-gray-200 hover:text-black"
+            )}
           >
             {option}
           </button>

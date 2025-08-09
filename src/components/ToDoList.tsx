@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { isSameDay } from "date-fns";
-import { Task } from "@prisma/client";
 import { deleteTask, getAllTasks, patchTask } from "@/src/service/taskApi";
 import useSWR from "swr";
 import { TodoItem } from "@/src/components/TodoItem";
@@ -9,11 +8,9 @@ import { Header } from "@/src/components/Header";
 import { CalendarDays } from "./CalendarDays";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { UpdateTodo } from "@/src/types/types";
+import { Flex } from "@radix-ui/themes";
 
-const ToDoList: React.FC<{
-  setAddTaskAction: (addTask: boolean) => void;
-  setEditTaskAction: (task: Task) => void;
-}> = ({ setAddTaskAction, setEditTaskAction }) => {
+const ToDoList = () => {
   const { data: tasks, mutate } = useSWR("toDoListTasks", getAllTasks);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
@@ -33,7 +30,7 @@ const ToDoList: React.FC<{
   };
 
   return (
-    <>
+    <Flex justify="center">
       {tasks && (
         <div className="flex flex-col pb-4 w-full h-[calc(100vh-180px)] relative rounded-3xl">
           {/* Заголовок */}
@@ -48,7 +45,7 @@ const ToDoList: React.FC<{
             defaultValue="all"
             className="mt-4 flex-1 flex flex-col min-h-0"
           >
-            <TabsList className="p-2 mb-2 h-max w-full shadow-lg border border-gray-200">
+            <TabsList className="p-2 mb-2 h-max w-full shadow-md border border-gray-200">
               {[
                 { id: 1, value: "all", title: "Все" },
                 { id: 4, value: "allToday", title: "Все сегодня" },
@@ -72,8 +69,6 @@ const ToDoList: React.FC<{
                       <TodoItem
                         key={task.id}
                         task={task}
-                        setAddTaskAction={setAddTaskAction}
-                        setEditTaskAction={setEditTaskAction}
                         handleChangeStatus={handleChangeStatus}
                         handleDeleteTask={handleDeleteTask}
                       />
@@ -92,8 +87,6 @@ const ToDoList: React.FC<{
                       <TodoItem
                         key={task.id}
                         task={task}
-                        setAddTaskAction={setAddTaskAction}
-                        setEditTaskAction={setEditTaskAction}
                         handleChangeStatus={handleChangeStatus}
                         handleDeleteTask={handleDeleteTask}
                       />
@@ -114,8 +107,6 @@ const ToDoList: React.FC<{
                           <TodoItem
                             key={task.id}
                             task={task}
-                            setAddTaskAction={setAddTaskAction}
-                            setEditTaskAction={setEditTaskAction}
                             handleChangeStatus={handleChangeStatus}
                             handleDeleteTask={handleDeleteTask}
                             activeTab
@@ -138,8 +129,6 @@ const ToDoList: React.FC<{
                           <TodoItem
                             key={task.id}
                             task={task}
-                            setAddTaskAction={setAddTaskAction}
-                            setEditTaskAction={setEditTaskAction}
                             handleChangeStatus={handleChangeStatus}
                             handleDeleteTask={handleDeleteTask}
                             activeTab
@@ -157,7 +146,7 @@ const ToDoList: React.FC<{
           </Tabs>
         </div>
       )}
-    </>
+    </Flex>
   );
 };
 
