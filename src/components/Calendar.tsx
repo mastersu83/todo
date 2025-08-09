@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import useSWR from "swr";
 import { getAllTasks } from "@/src/service/taskApi";
 import { cn } from "@/lib/utils";

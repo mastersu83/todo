@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 import { CustomToast } from "@/src/components/ui/custom-toast";
 import useSWR, { useSWRConfig } from "swr";
 import { Flex } from "@radix-ui/themes";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export const AddTask: React.FC<{
