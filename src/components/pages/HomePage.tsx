@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import ToDoList from "@/src/components/ToDoList";
 import { PlusIcon } from "lucide-react";

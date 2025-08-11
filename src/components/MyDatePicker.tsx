@@ -27,7 +27,7 @@ export const MyDatePicker = ({
     <>
       <button
         onClick={() => setShowDatePicker(!showDatePicker)}
-        className="flex flex-col items-center justify-center text-sm px-3 py-2 rounded-xl text-gray-700 hover:bg-gray-300 border border-gray-300 cursor-pointer shadow-md"
+        className="flex flex-col items-center justify-center px-3 py-2 rounded-xl hover:text-gray-700 hover:bg-gray-300 border border-gray-300 cursor-pointer shadow-md"
       >
         <Calendar1 />
         <span className="text-xs font-bold">Выбор</span>

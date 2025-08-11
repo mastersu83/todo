@@ -32,7 +32,7 @@ const ToDoList = () => {
   return (
     <Flex justify="center">
       {tasks && (
-        <div className="flex flex-col pb-4 w-full h-[calc(100vh-180px)] relative rounded-3xl">
+        <div className="flex flex-col pb-4 w-full h-[calc(100vh-180px)] relative">
           {/* Заголовок */}
           <Header />
           {/* Календарь */}

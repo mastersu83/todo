@@ -2,7 +2,7 @@
 
 import { Task } from "@prisma/client";
 import { formatDays } from "@/src/utils/utils";
-import { Card, Flex, Separator, Text } from "@radix-ui/themes";
+import { Card, Flex, Grid, Separator, Text } from "@radix-ui/themes";
 import Link from "next/link";
 import { Header } from "@/src/components/Header";
 
@@ -10,6 +10,12 @@ import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { deleteTask, patchTask } from "@/src/service/taskApi";
 import { useRouter } from "next/navigation";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/src/components/ui/popover";
+import { Close } from "@radix-ui/react-popover";
 
 interface ITaskPage {
   task: Task;
@@ -23,7 +29,7 @@ export const TaskPage = ({ task }: ITaskPage) => {
     { id: 1, title: "Выполнено", flag: "active" },
     { id: 4, title: "Активна", flag: "completed" },
     { id: 2, title: "Изменить", flag: "edit" },
-    { id: 3, title: "Удалить", flag: "delete" },
+    // { id: 3, title: "Удалить", flag: "delete" },
   ];
   const [filterOptions, setFilterOptions] = useState(
     options.filter((op) => op.flag !== task.status)
@@ -80,21 +86,15 @@ export const TaskPage = ({ task }: ITaskPage) => {
       </Flex>
       <Card className="shadow-md mb-2">
         <Flex justify="start" direction="column">
-          <div>
-            {task.title} {task.title} {task.title} {task.title}
-            {task.title}
-            {task.title} {task.title} {task.title} {task.title} {task.title}{" "}
-            {task.title}
-          </div>
+          <div>{task.title}</div>
           <Separator my="3" size="4" orientation="horizontal" />
           <div>
-            <span className="font-bold opacity-60">Заметки:</span> {task.title}{" "}
-            {task.title} {task.title} {task.title} {task.title} {task.title}{" "}
-            {task.title} {task.title} {task.title} {task.title}
+            <span className="font-bold opacity-60">Заметки:</span>{" "}
+            {task.description}
           </div>
         </Flex>
       </Card>
-      <div className="flex gap-2 mb-4 font-bold">
+      <Grid columns="3" gapX="2" className="mb-4 font-bold">
         {filterOptions.map((option) => (
           <button
             key={option.id}
@@ -109,7 +109,40 @@ export const TaskPage = ({ task }: ITaskPage) => {
             {option.title}
           </button>
         ))}
-      </div>
+        <Popover>
+          <PopoverTrigger
+            asChild
+            className="cursor-pointer flex justify-center items-center"
+          >
+            <button
+              className={cn(
+                "rounded-lg text-sm transition border border-gray-200 shadow-md cursor-pointer hover:bg-gray-200 hover:text-black"
+              )}
+            >
+              Удалить
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="flex w-50 gap-x-2 absolute top-0 -right-16">
+            <button
+              onClick={() => handleOptions("delete")}
+              className={cn(
+                "flex-1 py-2 rounded-lg text-sm transition border border-gray-200 shadow-md cursor-pointer hover:bg-gray-200 hover:text-black"
+              )}
+            >
+              Удалить
+            </button>
+            <Close asChild>
+              <button
+                className={cn(
+                  "flex-1 py-2 rounded-lg text-sm transition border border-gray-200 shadow-md cursor-pointer hover:bg-gray-200 hover:text-black"
+                )}
+              >
+                Отмена
+              </button>
+            </Close>
+          </PopoverContent>
+        </Popover>
+      </Grid>
     </div>
   );
 };
