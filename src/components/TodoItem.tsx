@@ -71,7 +71,9 @@ export const TodoItem = ({
       >
         <Card
           className={cn(
-            task.status === "completed" ? "bg-green-200 text-black" : "",
+            task.status === "completed"
+              ? "bg-gray-400 text-black opacity-50"
+              : "",
             "flex justify-between items-center border border-gray-200 backdrop-blur-sm"
           )}
         >
