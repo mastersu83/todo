@@ -20,8 +20,6 @@ export async function PATCH(req: NextRequest) {
   const { title, description, status, id, taskDate, alarmTime } =
     await req.json();
 
-  console.log({ title, description, status, id, taskDate, alarmTime });
-
   const tasks = await prisma.task.update({
     where: { id },
     data: {

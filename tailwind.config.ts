@@ -6,12 +6,18 @@ module.exports = {
         sans: ['"SF Pro Text"', "system-ui", "sans-serif"],
       },
       colors: {
-        macBg: "#ECECEC",
-        macSidebar: "#F5F5F7",
-        macCard: "#FFFFFF",
-        macText: "#1C1C1E",
-        macGray: "#8E8E93",
-        macBlue: "#0A84FF",
+        "accent-9": "var(--accent-9)",
+        "accent-10": "var(--accent-10)",
+        "accent-12": "var(--accent-12)",
+        "accent-1": "var(--accent-1)",
+        "accent-11": "var(--accent-11)",
+        "accent-8": "var(--accent-8)",
+        "accent-7": "var(--accent-7)",
+        "accent-6": "var(--accent-6)",
+        "accent-5": "var(--accent-5)",
+        "accent-4": "var(--accent-4)",
+        "accent-3": "var(--accent-3)",
+        "accent-2": "var(--accent-2)",
         random: {
           1: "#FF5733", // Ярко-оранжевый
           2: "#33FF57", // Неоново-зеленый

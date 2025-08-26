@@ -22,6 +22,7 @@ interface ITaskPage {
 }
 
 export const TaskPage = ({ task }: ITaskPage) => {
+  const [currentTask, setCurrentTask] = useState<Task>(task);
   const { push } = useRouter();
   const { dayName, monthName, dayNumber } = formatDays(task.taskDate);
 
@@ -49,6 +50,7 @@ export const TaskPage = ({ task }: ITaskPage) => {
       ...task,
       status: flag === "active" ? "active" : "completed",
     });
+    setCurrentTask(editTask);
     setFilterOptions(options.filter((op) => op.flag !== editTask.status));
   };
 
@@ -77,7 +79,7 @@ export const TaskPage = ({ task }: ITaskPage) => {
           </span>
         </p>
         <Text className="font-bold">
-          {new Date(task.taskDate).toLocaleTimeString([], {
+          {new Date(currentTask.taskDate).toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
             hour12: false,
@@ -86,11 +88,11 @@ export const TaskPage = ({ task }: ITaskPage) => {
       </Flex>
       <Card className="shadow-md mb-2">
         <Flex justify="start" direction="column">
-          <div>{task.title}</div>
+          <div>{currentTask.title}</div>
           <Separator my="3" size="4" orientation="horizontal" />
           <div>
             <span className="font-bold opacity-60">Заметки:</span>{" "}
-            {task.description}
+            {currentTask.description}
           </div>
         </Flex>
       </Card>

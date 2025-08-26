@@ -1,5 +1,9 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { cn } from "@/lib/utils";
+import { Mic } from "lucide-react";
+import { Flex } from "@radix-ui/themes";
+import { motion } from "motion/react";
 
 declare global {
   interface Window {
@@ -19,55 +23,32 @@ interface SpeechRecognition extends EventTarget {
   abort(): void;
   onresult: (event: any) => void;
   onerror: (event: any) => void;
+  onend: (() => void) | null;
 }
 
 export function VoiceInput({
   onSaveAction,
+  title,
 }: {
   onSaveAction: (text: string) => void;
+  title: string;
 }) {
   const [isRecording, setIsRecording] = useState(false);
-  const [transcript, setTranscript] = useState("");
-  const [volume, setVolume] = useState(0);
-  const [recordText, setRecordText] = useState("");
-
+  const [transcript, setTranscript] = useState(title);
+  const transcriptContainerRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
   const animationRef = useRef<number | null>(null);
   const microphoneRef = useRef<MediaStreamAudioSourceNode | null>(null);
+  const fullTranscriptRef = useRef(""); // Храним полный текст
 
-  // Инициализация анализатора звука
-  const initAudioAnalyzer = async (stream: MediaStream) => {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    audioContextRef.current = new AudioContext();
-    analyserRef.current = audioContextRef.current.createAnalyser();
-    analyserRef.current.fftSize = 32;
-
-    microphoneRef.current =
-      audioContextRef.current.createMediaStreamSource(stream);
-    microphoneRef.current.connect(analyserRef.current);
-
-    const updateVolume = () => {
-      if (!analyserRef.current) return;
-
-      const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
-      analyserRef.current.getByteFrequencyData(dataArray);
-      const average =
-        dataArray.reduce((sum, val) => sum + val, 0) / dataArray.length;
-      setVolume(Math.min((average / 255) * 100, 100));
-
-      animationRef.current = requestAnimationFrame(updateVolume);
-    };
-
-    updateVolume();
-  };
+  useEffect(() => {
+    setTranscript(title);
+    fullTranscriptRef.current = title;
+  }, [title]);
 
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      await initAudioAnalyzer(stream);
-
       const SpeechRecognition =
         window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) {
@@ -82,9 +63,20 @@ export function VoiceInput({
 
       recognition.onresult = (event: SpeechRecognitionEvent) => {
         const results = event.results;
-        const latest = results[results.length - 1];
-        const text = latest[0].transcript;
-        setTranscript(text);
+        let fullText = title + " ";
+
+        // Собираем все результаты, а не только последний
+        for (let i = 0; i < results.length; i++) {
+          if (results[i].isFinal) {
+            fullText += results[i][0].transcript + " ";
+          } else {
+            // Для промежуточных результатов
+            fullText += results[i][0].transcript;
+          }
+        }
+
+        fullTranscriptRef.current = fullText.trim();
+        setTranscript(fullText.trim());
       };
 
       recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
@@ -92,9 +84,18 @@ export function VoiceInput({
         stopRecording();
       };
 
+      recognition.onend = () => {
+        // Автоматически перезапускаем распознавание после паузы
+        if (isRecording) {
+          recognition.start();
+        }
+      };
+
       recognition.start();
       recognitionRef.current = recognition;
       setIsRecording(true);
+      // fullTranscriptRef.current = ""; // Сбрасываем при новом запуске
+      // setTranscript("");
     } catch (err) {
       console.error("Ошибка доступа к микрофону:", err);
     }
@@ -102,6 +103,7 @@ export function VoiceInput({
 
   const stopRecording = () => {
     if (recognitionRef.current) {
+      recognitionRef.current.onend = null; // Отключаем auto-restart
       recognitionRef.current.stop();
       recognitionRef.current = null;
     }
@@ -120,13 +122,25 @@ export function VoiceInput({
     }
 
     setIsRecording(false);
-    setVolume(0);
 
-    if (transcript) {
-      onSaveAction(transcript);
+    const finalText = fullTranscriptRef.current;
+    if (finalText) {
+      onSaveAction(finalText);
       setTranscript("");
+      fullTranscriptRef.current = "";
     }
   };
+  const scrollToBottom = useCallback(() => {
+    if (transcriptContainerRef.current) {
+      const container = transcriptContainerRef.current;
+      container.scrollTop = container.scrollHeight;
+    }
+  }, []);
+
+  // Скроллим при изменении transcript
+  useEffect(() => {
+    scrollToBottom();
+  }, [transcript, scrollToBottom]);
 
   useEffect(() => {
     return () => {
@@ -134,80 +148,67 @@ export function VoiceInput({
         stopRecording();
       }
     };
-  }, []);
-
-  // Генерация волн разной высоты
-  const renderWaveBars = () => {
-    const bars = [];
-    const barCount = 8;
-
-    for (let i = 0; i < barCount; i++) {
-      // Каждая волна реагирует с небольшой задержкой
-      const delayFactor = i / barCount;
-      const height =
-        4 +
-        (volume / 100) *
-          16 *
-          (0.5 + Math.sin(Date.now() / 200 + delayFactor * 2) / 2);
-
-      bars.push(
-        <div
-          key={i}
-          className="bg-blue-500 rounded-full transition-all duration-75"
-          style={{
-            width: "4px",
-            height: `${height}px`,
-            opacity: 0.6 + (volume / 100) * 0.4,
-          }}
-        />
-      );
-    }
-
-    return bars;
-  };
-
-  console.log(recordText);
+  }, [isRecording]);
 
   return (
-    <div className="flex flex-col items-center gap-4 p-6">
-      <button
-        onClick={isRecording ? stopRecording : startRecording}
-        className={`flex items-center gap-3 px-6 py-3 rounded-full ${
-          isRecording ? "bg-red-500" : "bg-blue-500"
-        } text-white shadow-lg transition-all hover:scale-105`}
-      >
-        {isRecording ? (
-          <>
-            <div className="flex items-end gap-1 h-6">{renderWaveBars()}</div>
-            <span>Остановить запись</span>
-          </>
-        ) : (
-          <>
-            <span className="text-xl">🎤</span>
-            <span>Начать запись</span>
-          </>
-        )}
-      </button>
-
-      <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg w-full max-w-md">
+    <Flex align="center" className="w-full">
+      <div className="rounded-lg w-full max-w-md">
         {/*<p className="text-gray-800 dark:text-gray-200">{transcript}</p>*/}
-        <input
-          onChange={(e) => setRecordText(transcript)}
-          className="text-gray-800 dark:text-gray-200"
-          value={transcript}
-        />
-      </div>
-
-      {transcript && (
-        <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg w-full max-w-md">
-          {/*<p className="text-gray-800 dark:text-gray-200">{transcript}</p>*/}
+        {isRecording ? (
+          <div
+            ref={transcriptContainerRef}
+            className="text-xl font-semibold border-b border-gray-300 focus:outline-none focus:border-indigo-400 text-center w-full mb-4 p-2 pb-0 max-w-md max-h-20 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800"
+          >
+            <p className="text-gray-800 h-[28px] dark:text-gray-200 whitespace-pre-wrap break-words">
+              {transcript}
+            </p>
+          </div>
+        ) : (
+          // <textarea
+          //   placeholder="Новая задача"
+          //   autoFocus
+          //   value={transcript}
+          //   onChange={(e) => setTranscript(transcript)}
+          //   className="text-xl font-semibold border-b border-gray-300 focus:outline-none focus:border-indigo-400 text-center w-full mb-4 p-2 pb-0"
+          // />
+          // <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg w-full max-w-md">
+          //   <p className="text-gray-800 dark:text-gray-200">{transcript}</p>
+          // </div>
           <input
-            onChange={(e) => setRecordText(transcript)}
-            className="text-gray-800 dark:text-gray-200"
-            value={transcript}
+            type="text"
+            placeholder="Новая задача"
+            autoFocus
+            value={title}
+            onChange={(e) => onSaveAction(e.target.value)}
+            className="text-xl font-semibold border-b border-gray-300 focus:outline-none focus:border-indigo-400 text-center w-full mb-4 p-2 pb-0"
           />
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+      <motion.div
+        onClick={isRecording ? stopRecording : startRecording}
+        animate={
+          isRecording
+            ? {
+                backgroundColor: [
+                  "rgba(255,255,255,0)",
+                  "#ff6d6d",
+                  "rgba(255,255,255,0)",
+                ],
+                transition: {
+                  duration: 1,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                },
+              }
+            : {
+                backgroundColor: "rgba(255,255,255,0)",
+                transition: { duration: 0.2, ease: "easeInOut" },
+              }
+        }
+        className={cn("rounded-full p-1 cursor-pointer")}
+      >
+        <Mic />
+      </motion.div>
+    </Flex>
   );
 }

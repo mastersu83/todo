@@ -22,6 +22,27 @@ a {
 }
 
 @theme inline {
+  /* Backgrounds */
+  --color-accent-1: var(--accent-1);
+  --color-accent-2: var(--accent-2);
+
+  /* Interactive components */
+  --color-accent-3: var(--accent-3);
+  --color-accent-4: var(--accent-4);
+  --color-accent-5: var(--accent-5);
+
+  /* Borders and separators */
+  --color-accent-6: var(--accent-6);
+  --color-accent-7: var(--accent-7);
+  --color-accent-8: var(--accent-8);
+
+  /* Solid colors */
+  --color-accent-9: var(--accent-9);
+  --color-accent-10: var(--accent-10);
+
+  /* Accessible text */
+  --color-accent-11: var(--accent-11);
+  --color-accent-12: var(--accent-12);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

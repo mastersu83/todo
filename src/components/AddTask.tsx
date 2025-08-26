@@ -8,6 +8,7 @@ import { CustomToast } from "@/src/components/ui/custom-toast";
 import useSWR, { useSWRConfig } from "swr";
 import { Flex } from "@radix-ui/themes";
 import { useRouter } from "next/navigation";
+import { VoiceInput } from "@/src/components/VoiceInput";
 
 export const AddTask: React.FC<{
   editTaskId?: string;
@@ -20,6 +21,8 @@ export const AddTask: React.FC<{
   const { mutate: mutateCalendar } = useSWRConfig();
 
   const today = new Date();
+  const [isRecording, setIsRecording] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
 
   const [selectedDate, setSelectedDate] = useState<Date>(today);
@@ -161,14 +164,10 @@ export const AddTask: React.FC<{
 
       {/* Форма */}
       <div className="p-1">
-        <input
-          type="text"
-          placeholder="Новая задача"
-          autoFocus
-          value={title ? title : ""}
-          onChange={(e) => setTitle(e.target.value)}
-          className="text-xl font-semibold border-b border-gray-300 focus:outline-none focus:border-indigo-400 text-center w-full mb-4 p-2 pb-0"
-        />
+        <Flex align="center" justify="between" className="w-full">
+          <VoiceInput onSaveAction={setTitle} title={title} />
+        </Flex>
+
         <label className="block text-sm font-semibold mb-1">Заметки</label>
         <input
           type="text"

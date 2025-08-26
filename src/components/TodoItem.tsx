@@ -112,7 +112,7 @@ export const TodoItem = ({
                   <div className="">
                     <h3
                       className={cn(
-                        "text-base font-semibold",
+                        "text-base font-semibold line-clamp-1",
                         task.status === "completed" ? "line-through" : ""
                       )}
                     >
