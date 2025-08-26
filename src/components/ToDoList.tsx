@@ -9,7 +9,6 @@ import { CalendarDays } from "./CalendarDays";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { UpdateTodo } from "@/src/types/types";
 import { Flex } from "@radix-ui/themes";
-import { VoiceInput } from "@/src/components/VoiceInput";
 
 const ToDoList = () => {
   const { data: tasks, mutate } = useSWR("toDoListTasks", getAllTasks);

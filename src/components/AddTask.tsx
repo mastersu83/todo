@@ -21,7 +21,6 @@ export const AddTask: React.FC<{
   const { mutate: mutateCalendar } = useSWRConfig();
 
   const today = new Date();
-  const [isRecording, setIsRecording] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
 

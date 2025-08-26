@@ -153,7 +153,6 @@ export function VoiceInput({
   return (
     <Flex align="center" className="w-full">
       <div className="rounded-lg w-full max-w-md">
-        {/*<p className="text-gray-800 dark:text-gray-200">{transcript}</p>*/}
         {isRecording ? (
           <div
             ref={transcriptContainerRef}
@@ -164,16 +163,6 @@ export function VoiceInput({
             </p>
           </div>
         ) : (
-          // <textarea
-          //   placeholder="Новая задача"
-          //   autoFocus
-          //   value={transcript}
-          //   onChange={(e) => setTranscript(transcript)}
-          //   className="text-xl font-semibold border-b border-gray-300 focus:outline-none focus:border-indigo-400 text-center w-full mb-4 p-2 pb-0"
-          // />
-          // <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg w-full max-w-md">
-          //   <p className="text-gray-800 dark:text-gray-200">{transcript}</p>
-          // </div>
           <input
             type="text"
             placeholder="Новая задача"
