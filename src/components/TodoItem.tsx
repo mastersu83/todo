@@ -93,7 +93,6 @@ export const TodoItem = ({
                   <CheckCircleIcon
                     className="cursor-pointer"
                     width={24}
-                    color="green"
                     onClick={async () => {
                       await handleStatus("active");
                     }}

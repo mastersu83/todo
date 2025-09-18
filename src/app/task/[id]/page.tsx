@@ -9,7 +9,7 @@ const Page = async ({ params }: IPage) => {
   const { id } = await params;
   const task = await getOneTasks(id);
 
-  return <TaskPage task={task} />;
+  return <TaskPage task={task} taskId={id} />;
 };
 
 export default Page;

@@ -8,7 +8,7 @@ import { Header } from "@/src/components/Header";
 
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
-import { deleteTask, patchTask } from "@/src/service/taskApi";
+import { deleteTask, getOneTasks, patchTask } from "@/src/service/taskApi";
 import { useRouter } from "next/navigation";
 import {
   Popover,
@@ -16,15 +16,22 @@ import {
   PopoverTrigger,
 } from "@/src/components/ui/popover";
 import { Close } from "@radix-ui/react-popover";
+import useSWR from "swr";
 
 interface ITaskPage {
   task: Task;
+  taskId: string;
 }
 
-export const TaskPage = ({ task }: ITaskPage) => {
-  const [currentTask, setCurrentTask] = useState<Task>(task);
+export const TaskPage = ({ taskId }: ITaskPage) => {
+  const { data: task, mutate } = useSWR("getOneTask", () =>
+    getOneTasks(taskId)
+  );
+  const [currentTask, setCurrentTask] = useState<Task>(
+    task ? task : ({} as Task)
+  );
   const { push } = useRouter();
-  const { dayName, monthName, dayNumber } = formatDays(task.taskDate);
+  const { dayName, monthName, dayNumber } = formatDays(task?.taskDate);
 
   const options = [
     { id: 1, title: "Выполнено", flag: "active" },
@@ -33,25 +40,27 @@ export const TaskPage = ({ task }: ITaskPage) => {
     // { id: 3, title: "Удалить", flag: "delete" },
   ];
   const [filterOptions, setFilterOptions] = useState(
-    options.filter((op) => op.flag !== task.status)
+    options.filter((op) => op.flag !== task?.status)
   );
 
   const handleOptions = async (flag: string) => {
-    if (flag === "edit") {
-      push(`/add-task/${task.id}`);
-      return;
+    if (task) {
+      if (flag === "edit") {
+        push(`/add-task/${task.id}`);
+        return;
+      }
+      if (flag === "delete") {
+        await deleteTask(task.id);
+        push("/");
+        return;
+      }
+      const editTask = await patchTask({
+        ...task,
+        status: flag === "active" ? "active" : "completed",
+      });
+      setCurrentTask(editTask);
+      setFilterOptions(options.filter((op) => op.flag !== editTask.status));
     }
-    if (flag === "delete") {
-      await deleteTask(task.id);
-      push("/");
-      return;
-    }
-    const editTask = await patchTask({
-      ...task,
-      status: flag === "active" ? "active" : "completed",
-    });
-    setCurrentTask(editTask);
-    setFilterOptions(options.filter((op) => op.flag !== editTask.status));
   };
 
   return (
@@ -102,7 +111,7 @@ export const TaskPage = ({ task }: ITaskPage) => {
             key={option.id}
             onClick={() => handleOptions(option.flag)}
             className={cn(
-              task.status === "completed" &&
+              task?.status === "completed" &&
                 option.flag === "active" &&
                 "bg-green-200 text-black",
               "flex-1 py-2 rounded-lg text-sm transition border border-gray-200 shadow-md cursor-pointer hover:bg-gray-200 hover:text-black"
